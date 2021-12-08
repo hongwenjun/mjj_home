@@ -18,6 +18,7 @@ function post($action) {
 // API Key: 54<<你懂得>>TS
 // API Hash: 8d<<你懂得>>d8a
 
+
 	// <configure> :
   //这里填写api的key
 	$postfields["key"] = "54<<你懂得>>TS";
@@ -25,12 +26,12 @@ function post($action) {
 	$postfields["hash"] = "8d<<你懂得>>d8a";
 
 	$masterurl = "https://solusvm.virmach.com/";
-	
+
 	// </configure>
-	
+
 	$postfields["action"] = $action;
 	$postfields["status"] = "true";
-	
+
 	if($action == "info") {
 		$postfields["hdd"] = "true";
 		$postfields["mem"] = "true";
@@ -48,34 +49,34 @@ function post($action) {
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $postfields);
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array("Expect:  "));
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-	
+
 	// Execute the request
 
 	$data = curl_exec($ch);
-	
+
 	$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	
+
 	if($code != 200) {
 		$return['error'] = 1;
-		
+
 		if($code == 405) {
 			$return['message'] = "Incorrect API credentials.";
 			return $return;
 		}
-		
+
 		$return['message'] = "Invalid status code.";
-		
+
 		return $return;
 	}
 
 	// Close the Curl handle
 
 	curl_close($ch);
-	
+
 	if(!$data) {
 		$return['error'] = 1;
 		$return['message'] = "Error connecting to API.";
-		
+
 		return $return;
 	}
 
@@ -88,17 +89,17 @@ function post($action) {
 	foreach ($match[1] as $x => $y) {
 		$result[$y] = $match[2][$x];
 	}
-	
+
 	if($result['status'] == "error") {
 		$return['error'] = 1;
 		$return['message'] = $result['statusmsg'];
-		
+
 		return $return;
 	}
 
 	$return = $result;
 	$return['error'] = 0;
-	
+
 	return $return;
 }
 
@@ -112,58 +113,58 @@ switch($action)
 {
 	case 'info':
 		$result = post("info");
-		
+
 		if($result['error'] == 0) {
 			$return = $result;
-			
+
 			$return['hdd'] = explode(",", $return['hdd']);
 			$return['mem'] = explode(",", $return['mem']);
 			$return['bw'] = explode(",", $return['bw']);
 		} else {
 			$return = $result;
 		}
-		
+
 		break;
-	
-	// case 'reboot':
-	// 	$result = post("reboot");
-		
-	// 	if($result['error'] == 0) {
-	// 		$return = $result;
-			
-	// 		$return['message'] = "Server rebooting now.";
-	// 	} else {
-	// 		$return = $result;
-	// 	}
-		
-	// 	break;
-		
+
+	case 'reboot':
+		$result = post("reboot");
+
+		if($result['error'] == 0) {
+			$return = $result;
+
+ 			$return['message'] = "Server rebooting now.";
+		} else {
+			$return = $result;
+ 		}
+
+		break;
+
 	// case 'boot':
 	// 	$result = post("boot");
-		
+
 	// 	if($result['error'] == 0) {
 	// 		$return = $result;
-			
+
 	// 		$return['message'] = "Server booting now.";
 	// 	} else {
 	// 		$return = $result;
 	// 	}
-		
+
 	// 	break;
-			
+
 	// case 'shutdown':
 	// 	$result = post("shutdown");
-		
+
 	// 	if($result['error'] == 0) {
 	// 		$return = $result;
-			
+
 	// 		$return['message'] = "Server shutting down now.";
 	// 	} else {
 	// 		$return = $result;
 	// 	}
-		
-	// 	break;	
-	
+
+	// 	break;
+
 	default:
 		$return['error'] = 1;
 		$return['message'] = "Invalid action specified.";
@@ -182,30 +183,30 @@ switch($action)
 	<div style="width: 90%; max-width: 800px; margin: 0 auto;">
 		<h1>服务器状态</h1>
 		<hr/>
-		
+
 		<?php if($return['error'] == 1) { ?>
 			<div class="alert alert-danger" role="alert"><?php echo $return['message']; ?></div>
-			
+
 			<a class="btn btn-default btn-block" href="?action=info" role="button">返回到监控页面</a>
 		<?php } else { ?>
-		
+
 		<?php if($action == "info") { ?>
-				
+
 			<h3>主机名</h3>
 			<?php echo $return['hostname']; ?>
-			
-			<h3>状态</h3>
-			<?php echo $return['vmstat']; ?>
-			
+
+			<h3>状态: <?php echo $return['vmstat']; ?> </h3>
+			<a class="btn btn-default btn-block" href="?action=reboot" role="button">重启</a>
+
 			<h3>带宽 <small>  已用 <?php echo humanFileSize($return['bw'][1]); ?> ， 总量 <?php echo humanFileSize($return['bw'][0]); ?></small></h3>
 			<div class="progress">
 				<div class="progress-bar" role="progressbar" aria-valuenow="<?php echo $return['bw'][3]; ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $return['bw'][3]; ?>%;">
 					<?php echo $return['bw'][3]; ?>%
 				</div>
 			</div>
-			
-		<?php } ?>		
-		
+
+		<?php } ?>
+
 		<?php } ?>
 	</div>
 </body>
