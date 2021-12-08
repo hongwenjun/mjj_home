@@ -125,6 +125,45 @@ switch($action)
 		
 		break;
 	
+	// case 'reboot':
+	// 	$result = post("reboot");
+		
+	// 	if($result['error'] == 0) {
+	// 		$return = $result;
+			
+	// 		$return['message'] = "Server rebooting now.";
+	// 	} else {
+	// 		$return = $result;
+	// 	}
+		
+	// 	break;
+		
+	// case 'boot':
+	// 	$result = post("boot");
+		
+	// 	if($result['error'] == 0) {
+	// 		$return = $result;
+			
+	// 		$return['message'] = "Server booting now.";
+	// 	} else {
+	// 		$return = $result;
+	// 	}
+		
+	// 	break;
+			
+	// case 'shutdown':
+	// 	$result = post("shutdown");
+		
+	// 	if($result['error'] == 0) {
+	// 		$return = $result;
+			
+	// 		$return['message'] = "Server shutting down now.";
+	// 	} else {
+	// 		$return = $result;
+	// 	}
+		
+	// 	break;	
+	
 	default:
 		$return['error'] = 1;
 		$return['message'] = "Invalid action specified.";
